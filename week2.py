@@ -23,10 +23,6 @@ FUNCTIONS = {
     "Exponential: e^x - 3x": {
         "func": lambda x: math.exp(x) - 3*x,
         "dfunc": lambda x: math.exp(x) - 3
-    },
-    "Logarithmic: ln(x) + x² - 3": {
-        "func": lambda x: math.log(x) + x**2 - 3,
-        "dfunc": lambda x: 1/x + 2*x
     }
 }
 
