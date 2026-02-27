@@ -12,7 +12,7 @@ app.geometry("800x600")
 
 # -------------------------------
 # HEADER
-# -------------------------------
+# ------------------------------
 header = ctk.CTkLabel(
     app,
     text="Newton–Raphson Numerical Solver",
