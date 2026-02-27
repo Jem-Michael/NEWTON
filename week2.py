@@ -2,7 +2,7 @@ import customtkinter as ctk # type: ignore
 import math
 from tkinter import messagebox
 
-# -------------------------------
+# ------------------------------
 # CONFIGURE APPEARANCE
 # -------------------------------
 ctk.set_appearance_mode("dark")
