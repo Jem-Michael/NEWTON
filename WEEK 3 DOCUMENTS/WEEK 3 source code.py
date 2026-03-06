@@ -29,6 +29,15 @@ class SolutionTrail:
         self.step_counter = 0
         self.text_widget.configure(state="normal")
         self.text_widget.delete("1.0", "end")
+        # write placeholder skeleton so UI always looks like a solved example
+        self._write(
+            "GIVEN:\n  f(x) = placeholder\n\n"
+            "METHOD:\n  placeholder\n\n"
+            "STEPS:\n  1. placeholder\n  2. placeholder\n  3. placeholder\n\n"
+            "FINAL ANSWER:\n  placeholder\n\n"
+            "VERIFICATION:\n  placeholder\n\n"
+            "SUMMARY:\n  placeholder\n"
+        )
         self.text_widget.configure(state="disabled")
 
     def add_heading(self, heading: str):
@@ -354,7 +363,8 @@ class NewtonRaphsonApp:
         self.guess2_var.set("2.0")
         self.tol_var.set("1e-6")
         self.maxiter_var.set("50")
-        self.final_var.set("")
+        # final root placeholder text
+        self.final_var.set("placeholder")
         self.trail.clear()
 
     def validate_inputs(self):
@@ -405,101 +415,19 @@ class NewtonRaphsonApp:
         return valid, errors, method, func, x0, x1, tol, maxiter
 
     def compute(self):
-        """Perform the root-finding computation."""
+        """Display a skeleton of a solved run filled with placeholders."""
+        # clear existing trail and set final value placeholder
         self.trail.clear()
-        self.final_var.set("")
-        valid, errors, method, func_name, x0, x1, tol, maxiter = self.validate_inputs()
-        
-        self.trail.add_heading("GIVEN")
-        self.trail.log(f"Method: {method}")
-        self.trail.log(f"Function: {func_name}")
-        self.trail.log(f"Initial guess: {self.guess_var.get()}")
-        if method == "Secant":
-            self.trail.log(f"Second guess: {self.guess2_var.get()}")
-        self.trail.log(f"Tolerance: {self.tol_var.get()}")
-        self.trail.log(f"Max iterations: {self.maxiter_var.get()}")
-
-        if not valid:
-            self.trail.add_heading("VALIDATION")
-            for err in errors:
-                self.trail.add_step("ERROR: " + err)
-            messagebox.showerror("Input Error", "\n".join(errors))
-            return
-        else:
-            self.trail.add_heading("VALIDATION")
-            self.trail.add_step("All inputs valid.")
-
-        # Execute solver
-        f, df = PREDEFINED_FUNCTIONS[func_name]
-        self.trail.add_heading("METHOD")
-        self.trail.log(
-            f"{method} with tolerance={tol} and maxiter={maxiter}"
+        self.final_var.set("placeholder")
+        # add full placeholder structure
+        self.trail._write(
+            "GIVEN:\n  f(x) = placeholder\n\n"
+            "METHOD:\n  placeholder\n\n"
+            "STEPS:\n  1. placeholder\n  2. placeholder\n  3. placeholder\n\n"
+            "FINAL ANSWER:\n  placeholder\n\n"
+            "VERIFICATION:\n  placeholder\n\n"
+            "SUMMARY:\n  placeholder\n"
         )
-        self.trail.add_heading("STEPS")
-        start_time = datetime.now()
-        reason = ""
-        
-        if method == "Newton-Raphson":
-            x = x0
-            for i in range(1, maxiter + 1):
-                fx = f(x)
-                dfx = df(x)
-                if dfx == 0:
-                    reason = f"Derivative zero at iteration {i}"
-                    self.trail.add_step(reason)
-                    break
-                x_new = x - fx / dfx
-                err = abs(x_new - x)
-                self.trail.add_step(
-                    f"i={i}, x={x:.10f}, f(x)={fx:.3e}, f'(x)={dfx:.3e}, x_next={x_new:.10f}, err={err:.3e}"
-                )
-                if err < tol:
-                    reason = "Converged to tolerance"
-                    x = x_new
-                    break
-                x = x_new
-            else:
-                reason = "Reached max iterations"
-        else:  # Secant method
-            x_prev = x0
-            x = x1
-            for i in range(1, maxiter + 1):
-                f_prev = f(x_prev)
-                fx = f(x)
-                denom = fx - f_prev
-                if denom == 0:
-                    reason = f"Zero denominator at iteration {i}"
-                    self.trail.add_step(reason)
-                    break
-                x_new = x - fx * (x - x_prev) / denom
-                err = abs(x_new - x)
-                self.trail.add_step(
-                    f"i={i}, x_prev={x_prev:.10f}, x={x:.10f}, f_prev={f_prev:.3e}, f(x)={fx:.3e}, x_next={x_new:.10f}, err={err:.3e}"
-                )
-                if err < tol:
-                    reason = "Converged to tolerance"
-                    x = x_new
-                    break
-                x_prev, x = x, x_new
-            else:
-                reason = "Reached max iterations"
-        
-        end_time = datetime.now()
-        elapsed = (end_time - start_time).total_seconds()
-
-        self.trail.add_heading("FINAL ANSWER")
-        self.trail.log(f"x ≈ {x:.12g}")
-        self.final_var.set(f"{x:.12g}")
-
-        self.trail.add_heading("VERIFICATION")
-        residual = f(x)
-        self.trail.log(f"f(x) ≈ {residual:.3e}")
-
-        self.trail.add_heading("SUMMARY")
-        self.trail.log(f"Stopped because: {reason}")
-        self.trail.log(f"Iterations: {i}")
-        self.trail.log(f"Elapsed time: {elapsed:.4f} s")
-        self.trail.log(f"Timestamp: {end_time.strftime('%Y-%m-%d %H:%M:%S')}")
 
     def export_trail(self):
         """Export the solution trail to a text file."""
