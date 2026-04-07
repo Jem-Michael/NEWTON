@@ -1,4 +1,4 @@
-# 🧮 Newton-Raphson Root Finder (v2.0)
+# 🧮 Newton-Raphson Root Finder
 
 ## 📌 Project Description
 This application is a numerical solver that finds the root of a function using:
